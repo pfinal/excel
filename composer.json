@@ -1,0 +1,24 @@
+{
+    "name": "pfinal/excel",
+    "description": "excel",
+    "license": "MIT",
+    "homepage": "http://www.pfinal.cn",
+    "support": {
+        "source": "https://github.com/pfinal/excel"
+    },
+    "authors": [
+        {
+            "name": "Zou Yiliang"
+        }
+    ],
+    "require": {
+        "php": ">=5.3",
+        "PHPOffice/PHPExcel": "^1.8",
+        "mk-j/PHP_XLSXWriter": "^0.32.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PFinal\\Excel\\": "src/"
+        }
+    }
+}
