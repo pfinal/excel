@@ -62,9 +62,10 @@ class Excel
      *     array('id' => 3, 'name' => 'Ethan', 'age' => 34),
      * );
      * $map = array(
-     *     'id' => '编号',
-     *     'name' => '姓名',
-     *     'age' => '年龄',
+     *     'title'=>array('id' => '编号',
+     *          'name' => '姓名',
+     *          'age' => '年龄',
+     *      )
      * );
      * $file = 'user' . date('Y-m-d');
      * $excel = new \PHPExcel\Excel();
