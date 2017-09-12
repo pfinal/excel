@@ -83,7 +83,7 @@ class Excel
      * @throws \PHPExcel_Exception
      * @throws \PHPExcel_Reader_Exception
      */
-    public static function exportExcel($data, $map = array(), $filename = '', $title = 'Worksheet')
+    public static function exportExcelV1($data, $map = array(), $filename = '', $title = 'Worksheet')
     {
         if (!is_array($data)) {
             return;
@@ -170,6 +170,105 @@ class Excel
         header('Content-Disposition: attachment; filename=' . $filename);
 
         $objWriter->save('php://output');
+    }
+
+    /**
+     * 导出到Excel
+     *
+     * Office 2007+ xlsx format
+     * supports writing huge 100K+ row spreadsheets
+     *
+     * 使用示例
+     *
+     * $data = array(
+     *     array('id' => 1, 'name' => 'Jack', 'age' => 18),
+     *     array('id' => 2, 'name' => 'Mary', 'age' => 20),
+     *     array('id' => 3, 'name' => 'Ethan', 'age' => 34),
+     * );
+     *
+     * $map = array(
+     *     'title'=>array('id' => '编号',
+     *          'name' => '姓名',
+     *          'age' => '年龄',
+     *      )
+     * );
+     *
+     * $file = 'user' . date('Y-m-d');
+     * $excel = new \PHPExcel\Excel();
+     * $excel->exportExcel($data, $map, $file, '用户信息');
+     *
+     * @param $data
+     * @param array $map
+     * @param string $filename
+     * @param string $title
+     */
+    public static function exportExcel($data, $map = array(), $filename = '', $workSheetName = 'Worksheet')
+    {
+        /*
+        $map = array(
+            'title' => array('product_id' => '编号', 'created' => '时间', 'quantity' => '数量', 'amount' => '单价','description'=>'描述'),
+            'simpleFormat' => array(
+                'created' => 'date',
+                'product_id' => 'integer',
+                'quantity' => '#,##0',
+                'amount' => 'price',
+                'description' => 'string',
+            ),
+        );
+
+        $data = array(
+            array('created' => '2015-01-01', 'product_id' => 873, 'quantity' => 1, 'amount' => '44.00', 'description' => 'misc'),
+            array('created' => '2015-01-12', 'product_id' => 324, 'quantity' => 2, 'amount' => '88.00', 'description' => 'none'),
+        );//*/
+
+        if (!isset($map['title'])) {
+            if (count($data) > 0) {
+                $map['title'] = array_combine(array_keys($data[0]), array_keys($data[0]));
+            }
+        } else {
+            $map['title'] = array();
+        }
+
+        $header = array();
+        foreach ($map['title'] as $key => $val) {
+            if (isset($map['simpleFormat'][$key])) {
+                $header[$val] = $map['simpleFormat'][$key];
+            } else {
+                $header[$val] = 'GENERAL';
+            }
+        }
+
+        $writer = new \XLSXWriter();
+        //$writer->writeSheet($data, 'Sheet1', $header);
+
+        $writer->writeSheetHeader($workSheetName, $header);
+        foreach ($data as $row) {
+            $temp = array();
+            foreach ($map['title'] as $key => $value) {
+                if (isset($row[$key])) {
+                    $temp[] = $row[$key];
+                } else {
+                    $temp[] = '';
+                }
+            }
+
+            $writer->writeSheetRow($workSheetName, $temp);
+        }
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'excel');
+
+        $writer->writeToFile($tempFile);
+
+        if (empty($filename)) {
+            $filename = date('YmdHis') . '.xlsx';
+        }
+
+        //弹出下载对话框
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename=' . $filename);
+
+        readfile($tempFile);
+        unlink($tempFile);
     }
 
 
