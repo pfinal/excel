@@ -61,7 +61,6 @@ $map = array(
         'name' => '姓名',
         'age' => '年龄',
      ],
-    'numberFormat' =>array('created_at' => \PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY),
 );
 
 $file = 'user' . date('Y-m-d');
