@@ -263,6 +263,10 @@ class Excel
             $filename = date('YmdHis') . '.xlsx';
         }
 
+        if (strtolower(substr($filename, -5)) != '.xlsx') {
+            $filename .= '.xlsx';
+        }
+
         //弹出下载对话框
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename=' . $filename);
