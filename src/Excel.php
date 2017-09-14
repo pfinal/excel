@@ -277,7 +277,7 @@ class Excel
 
 
     /**
-     * 读取Excel文件数据
+     * 读取Excel文件数据 (或cvs文件)
      *
      * 使用示例
      *
@@ -294,11 +294,12 @@ class Excel
      * @param int $titleRow 标题在第几行
      * @param int $beginColumn 从行几列开始
      * @param string $method 获取数据方式。 支持公式计算:calculated、格式化后返回:formatted、 默认为空:原样返回单元格数据
+     * @param string $encoding 文件编码 UTF-8、GBK等。 导入csv文件时默认为UTF-8，如果你导入的csv文件是其它编码格式例如"GBK"，请传入此参数为"GBK"
      * @return array
      * @throws \PHPExcel_Exception
      * @throws \PHPExcel_Reader_Exception
      */
-    public static function readExcelFile($file, $map = array(), $titleRow = 1, $beginColumn = 1, $method = '')
+    public static function readExcelFile($file, $map = array(), $titleRow = 1, $beginColumn = 1, $method = '', $encoding = null)
     {
         //单元格缓存到PHP临时文件中
         $cacheMethod = \PHPExcel_CachedObjectStorageFactory:: cache_to_phpTemp;
@@ -307,6 +308,10 @@ class Excel
 
         //$excelReader = \PHPExcel_IOFactory::createReader('Excel5');
         $excelReader = \PHPExcel_IOFactory::createReaderForFile($file);
+
+        if ($encoding !== null && method_exists($excelReader, 'setInputEncoding')) {
+            $excelReader->setInputEncoding($encoding);
+        }
 
         //读取excel文件中的第一个工作表
         $phpExcel = $excelReader->load($file)->getSheet(0);
@@ -317,7 +322,6 @@ class Excel
         //取得最大的列号
         $total_column = $phpExcel->getHighestColumn();
         $highestColumnIndex = \PHPExcel_Cell::columnIndexFromString($total_column);
-
 
         //将列名与map对应
         $title = array();
