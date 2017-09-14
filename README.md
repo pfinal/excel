@@ -29,6 +29,9 @@ array_walk($data, function (&$item) {
 
 var_dump($data);
 
+//如果数据量大，建议用csv格式
+$data = Excel::readExcelFile('./1.csv', ['id' => '编号', 'name' => '姓名', 'date' => '日期'], 1, 1, '', 'GBK');
+
 ```
 
 Excel中的数据:
@@ -66,5 +69,7 @@ $map = array(
 $file = 'user' . date('Y-m-d');
 
 Excel::exportExcel($data, $map, $file, '用户信息');
+
+
 
 ```
