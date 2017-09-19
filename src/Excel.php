@@ -222,11 +222,11 @@ class Excel
         );//*/
 
         if (!isset($map['title'])) {
-            if (count($data) > 0) {
+            if (count($data) > 0 && isset($data[0])) {
                 $map['title'] = array_combine(array_keys($data[0]), array_keys($data[0]));
+            } else {
+                $map['title'] = array();
             }
-        } else {
-            $map['title'] = array();
         }
 
         $header = array();
