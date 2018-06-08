@@ -173,7 +173,7 @@ class Excel
     }
 
     /**
-     * 导出到Excel
+     * 导出到Excel文件
      *
      * Office 2007+ xlsx format
      * supports writing huge 100K+ row spreadsheets
@@ -199,10 +199,11 @@ class Excel
      *
      * @param $data
      * @param array $map
-     * @param string $filename
-     * @param string $title
+     * @param string $filename 保存的文件名 如果为空，将在临时目录生成随机文件名
+     * @param string $workSheetName
+     * @return string 返回文件名
      */
-    public static function exportExcel($data, $map = array(), $filename = '', $workSheetName = 'Worksheet')
+    public static function toExcelFile($data, $map = array(), $filename = '', $workSheetName = 'Worksheet')
     {
         /*
         $map = array(
@@ -255,26 +256,61 @@ class Excel
             $writer->writeSheetRow($workSheetName, $temp);
         }
 
-        $tempFile = tempnam(sys_get_temp_dir(), 'excel');
-
-        $writer->writeToFile($tempFile);
-
         if (empty($filename)) {
-            $filename = date('YmdHis') . '.xlsx';
+            $filename = tempnam(sys_get_temp_dir(), 'excel');
         }
 
         if (strtolower(substr($filename, -5)) != '.xlsx') {
             $filename .= '.xlsx';
         }
+        $writer->writeToFile($filename);
 
+        return $filename;
+    }
+
+    /**
+     * 导出到Excel，浏览器直接下载
+     *
+     * Office 2007+ xlsx format
+     * supports writing huge 100K+ row spreadsheets
+     *
+     * 使用示例
+     *
+     * $data = array(
+     *     array('id' => 1, 'name' => 'Jack', 'age' => 18),
+     *     array('id' => 2, 'name' => 'Mary', 'age' => 20),
+     *     array('id' => 3, 'name' => 'Ethan', 'age' => 34),
+     * );
+     *
+     * $map = array(
+     *     'title'=>array('id' => '编号',
+     *          'name' => '姓名',
+     *          'age' => '年龄',
+     *      )
+     * );
+     *
+     * $file = 'user' . date('Y-m-d');
+     * $excel = new \PHPExcel\Excel();
+     * $excel->exportExcel($data, $map, $file, '用户信息');
+     *
+     * @param $data
+     * @param array $map
+     * @param string $filename
+     * @param string $workSheetName
+     */
+    public static function exportExcel($data, $map = array(), $filename = '', $workSheetName = 'Worksheet')
+    {
         //弹出下载对话框
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename=' . $filename);
 
+        $tempFile = tempnam(sys_get_temp_dir(), 'excel');
+
+        static::toExcelFile($data, $map, $tempFile, $workSheetName);
+
         readfile($tempFile);
         unlink($tempFile);
     }
-
 
     /**
      * 读取Excel文件数据 (或cvs文件)
