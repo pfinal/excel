@@ -259,10 +259,12 @@ class Excel
         if (empty($filename)) {
             $filename = tempnam(sys_get_temp_dir(), 'excel');
         }
-
+        /**
+        * 此处不应有次判断,否则将造成读写不一致。无法正常导出excel文件
         if (strtolower(substr($filename, -5)) != '.xlsx') {
             $filename .= '.xlsx';
         }
+        */
         $writer->writeToFile($filename);
 
         return $filename;
