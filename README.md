@@ -14,7 +14,7 @@ composer require pfinal/excel
 ```
 <?php
 
-// include 'vendor/autoload.php'; // 在框架中不需要这一句
+include 'vendor/autoload.php'; // 如果在框架中通常不需要这一句
 
 use PFinal\Excel\Excel;
 
