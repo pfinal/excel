@@ -14,7 +14,7 @@ composer require pfinal/excel
 ```
 <?php
 
-include 'vendor/autoload.php';
+// include 'vendor/autoload.php'; // 在框架中不需要这一句
 
 use PFinal\Excel\Excel;
 
@@ -52,24 +52,26 @@ $data = [
 
 
 ```
-$data = array(
-    array('id' => 1, 'name' => 'Jack', 'age' => 18, 'date'=>'2017-07-18']),
-    array('id' => 2, 'name' => 'Mary', 'age' => 20, 'date'=>'2017-07-18']),
-    array('id' => 3, 'name' => 'Ethan', 'age' => 34, 'date'=>'2017-07-18']),
-);
+$data = [
+    ['id' => 1, 'name' => 'Jack', 'age' => 18, 'date'=>'2017-07-18']],
+    ['id' => 2, 'name' => 'Mary', 'age' => 20, 'date'=>'2017-07-18']],
+    ['id' => 3, 'name' => 'Ethan', 'age' => 34, 'date'=>'2017-07-18']],
+];
 
-$map = array(
-    'title'=>[
+$map = [
+  'title'=>[
         'id' => '编号',
         'name' => '姓名',
         'age' => '年龄',
-     ],
-);
+    ],
+];
 
 $file = 'user' . date('Y-m-d');
 
+//浏览器直接下载
 Excel::exportExcel($data, $map, $file, '用户信息');
 
-
+//保存到文件
+//Excel::toExcelFile($data, $map, $file, '用户信息')
 
 ```
