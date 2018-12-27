@@ -71,7 +71,7 @@ $file = 'user' . date('Y-m-d');
 //浏览器直接下载
 Excel::exportExcel($data, $map, $file, '用户信息');
 
-//保存到文件
+//保存到磁盘文件中
 //Excel::toExcelFile($data, $map, $file, '用户信息')
 
 ```
