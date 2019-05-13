@@ -74,7 +74,7 @@ Excel::exportExcel($data, $map, $file, '用户信息');
 //Excel::toExcelFile($data, $map, $file, '用户信息');
 
 
-//分块输入到csv文件
+//分块导出到CSV文件
 Excel::chunkExportCSV($map, './temp.csv', function ($writer) {
 
      DB::select('user')->orderBy('id')->chunk(100, function ($users) use ($writer) {
