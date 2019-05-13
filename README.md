@@ -73,4 +73,14 @@ Excel::exportExcel($data, $map, $file, '用户信息');
 //保存到磁盘文件中
 //Excel::toExcelFile($data, $map, $file, '用户信息');
 
+
+//分块输入到csv文件
+Excel::chunkExportCSV($map, './temp.csv', function ($writer) {
+
+     DB::select('user')->orderBy('id')->chunk(100, function ($users) use ($writer) {
+         /**  \Closure $writer */
+         $writer($users);
+     });
+});
+
 ```

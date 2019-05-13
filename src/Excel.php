@@ -453,4 +453,65 @@ class Excel
         return $date->format($format);
     }
 
+    /**
+     * 分块导出到CSV文件
+     *
+     * 使用示例
+     * Excel::chunkExportCSV($map, './temp.csv', function ($writer) {
+     *     DB::select('user')->orderBy('id')->chunk(100, function ($users) use ($writer) {
+     *         $writer($users);
+     *     });
+     *
+     * });
+     *
+     * @param array $map
+     *  $map = array(
+     *     'id' => '编号',
+     *     'name' => '姓名',
+     *     'age' => '年龄',
+     *  );
+     *
+     * @param \Closure $cb
+     * @param null $filename
+     * @return string
+     * @throws \Exception
+     */
+    public static function chunkExportCSV($map, $filename, $cb)
+    {
+        if (empty($filename)) {
+            $filename = uniqid();
+        }
+
+        if (strtolower(substr($filename, -4)) != '.csv') {
+            $filename .= '.csv';
+        }
+
+        $fp = fopen($filename, 'w');
+
+        if (empty($map['title'])) {
+            throw new \Exception('$map miss title key');
+        }
+
+        fputcsv($fp, $map['title']);
+
+        $fields = array_keys($map['title']);
+
+        $cb(function ($arr) use ($fp, $fields) {
+
+            foreach ($arr as $val) {
+
+                $row = array();
+
+                foreach ($fields as $field) {
+                    $row[] = isset($val[$field]) ? $val[$field] : '';
+                }
+
+                fputcsv($fp, $row);
+            }
+        });
+
+        fclose($fp);
+
+        return $filename;
+    }
 }
