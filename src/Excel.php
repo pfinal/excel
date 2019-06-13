@@ -300,13 +300,20 @@ class Excel
      */
     public static function exportExcel($data, $map = array(), $filename = '', $workSheetName = 'Worksheet')
     {
+        $tempFile = static::toExcelFile($data, $map, '', $workSheetName);
+
+        if (empty($filename)) {
+            $filename = @date('YmdHis') . '.xlsx';
+        }
+
+        if (strtolower(substr($filename, -5)) != '.xlsx') {
+            $filename .= '.xlsx';
+        }
+
         //弹出下载对话框
-        header('Content-Type: application/octet-stream');
+        //header('Content-Type: application/octet-stream');
+        header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment; filename=' . $filename);
-
-        $tempFile = tempnam(sys_get_temp_dir(), 'excel');
-
-        static::toExcelFile($data, $map, $tempFile, $workSheetName);
 
         readfile($tempFile);
         unlink($tempFile);
