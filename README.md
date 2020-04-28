@@ -74,7 +74,7 @@ Excel::exportExcel($data, $map, $file, '用户信息');
 //Excel::toExcelFile($data, $map, $file, '用户信息');
 
 
-//分块导出到CSV文件 (如果中文乱码，输出为GBK字符集，将UTF-8改为GBK即可)
+//分块导出到CSV文件 (如果中文乱码，可输出为GBK字符集，将UTF-8改为GBK即可)
 Excel::chunkExportCSV($map, './temp.csv', function ($writer) {
 
      DB::select('user')->orderBy('id')->chunk(100, function ($users) use ($writer) {
