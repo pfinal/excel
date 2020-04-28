@@ -23,8 +23,9 @@ Excel::chunkExportCSV($map, './temp.csv', function ($writer) {
         array('id' => 3, 'name' => '"Ethan', 'age' => 34),
         array('id' => 4, 'name' => '\'Tony', 'age' => 34),
         array('id' => 5, 'name' => ',', 'age' => 34),
+        array('id' => 6, 'name' => '张三', 'age' => 34),
     );
 
     /**  \Closure $writer */
     $writer($data);
-});
+}, 'gbk');

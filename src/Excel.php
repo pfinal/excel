@@ -471,19 +471,21 @@ class Excel
      *
      * });
      *
-     * @param array $map
-     *  $map = array(
-     *     'id' => '编号',
-     *     'name' => '姓名',
-     *     'age' => '年龄',
-     *  );
      *
-     * @param \Closure $cb
+     * @param array $map
+     * $map = array(
+     *     'title'=>array(
+     *          'id' => '编号',
+     *          'name' => '姓名',
+     *          'age' => '年龄',
+     *      )
+     * )
      * @param null $filename
+     * @param \Closure $cb
+     * @param string $charset
      * @return string
-     * @throws \Exception
      */
-    public static function chunkExportCSV($map, $filename, $cb)
+    public static function chunkExportCSV($map, $filename, $cb, $charset = 'UTF-8')
     {
         if (empty($filename)) {
             $filename = uniqid();
@@ -496,14 +498,18 @@ class Excel
         $fp = fopen($filename, 'w');
 
         if (empty($map['title'])) {
-            throw new \Exception('$map miss title key');
+            throw new \RuntimeException('$map miss title key');
         }
+
+        $map = Excel::convertUtf8ToOther($map, $charset);
 
         fputcsv($fp, $map['title']);
 
         $fields = array_keys($map['title']);
 
-        $cb(function ($arr) use ($fp, $fields) {
+        $cb(function ($arr) use ($fp, $fields, $charset) {
+
+            $arr = Excel::convertUtf8ToOther($arr, $charset);
 
             foreach ($arr as $val) {
 
@@ -521,4 +527,37 @@ class Excel
 
         return $filename;
     }
+
+    /**
+     * 将UTF-8的数据，转为指定的编码
+     * @param array $data
+     * @param $charset
+     * @return array
+     */
+    private static function convertUtf8ToOther($data, $charset)
+    {
+        if (strtolower($charset) === 'utf-8') {
+            return $data;
+        }
+
+        if (is_string($data)) {
+            return @iconv("UTF-8", $charset, $data);
+        }
+
+        $result = array();
+        foreach ($data as $k => $v) {
+            $k = @iconv("UTF-8", $charset, $k);
+
+            if (is_array($v)) {
+                $v = self::convertUtf8ToOther($v, $charset);
+            } else {
+                $v = @iconv("UTF-8", $charset, $v);
+            }
+
+            $result[$k] = $v;
+        }
+
+        return $result;
+    }
+
 }
