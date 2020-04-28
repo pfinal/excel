@@ -11,7 +11,7 @@ composer require pfinal/excel
 
 ### 导入Excel
 
-```
+```php
 <?php
 
 include 'vendor/autoload.php'; // 如果在框架中通常不需要
